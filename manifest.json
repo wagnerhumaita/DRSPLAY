@@ -1,0 +1,21 @@
+{
+  "name": "DRSPLAY - Controle de Clientes",
+  "short_name": "DRSPLAY",
+  "description": "Um sistema simples para gerenciar clientes e seus vencimentos.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#111827",
+  "theme_color": "#F97316",
+  "icons": [
+    {
+      "src": "icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

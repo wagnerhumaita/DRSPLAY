@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DRSPLAY - Sistema de Controle de Clientes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-black to-orange-900 min-h-screen text-white">
+    <header class="bg-gradient-to-r from-black via-gray-900 to-orange-900 shadow-2xl border-b-2 border-orange-500 backdrop-blur-lg">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-gradient-to-r from-orange-500 to-orange-600 text-black p-3 rounded-xl shadow-lg shadow-orange-500/50 animate-pulse">
+                        <i class="fas fa-users text-xl"></i>
+                    </div>
+                    <h1 class="text-4xl font-bold bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">DRSPLAY</h1>
+                </div>
+                <button id="addClientBtn" class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-black px-8 py-3 rounded-xl font-bold transition-all duration-300 flex items-center space-x-2 shadow-lg shadow-orange-500/50 hover:shadow-orange-400/70 hover:scale-105 border border-orange-400">
+                    <i class="fas fa-plus"></i>
+                    <span>NOVO CLIENTE</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div id="mainContent">
+        <div class="container mx-auto px-6 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-gradient-to-br from-gray-800 to-black rounded-2xl shadow-2xl p-6 border border-orange-500/30 backdrop-blur-lg hover:border-orange-400/50 transition-all duration-300 hover:scale-105">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-orange-300 text-sm font-medium uppercase tracking-wider">Total de Clientes</p>
+                            <p id="totalClients" class="text-4xl font-bold text-white">0</p>
+                        </div>
+                        <div class="bg-gradient-to-r from-orange-500 to-orange-600 p-4 rounded-2xl shadow-lg shadow-orange-500/50">
+                            <i class="fas fa-users text-black text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-br from-gray-800 to-black rounded-2xl shadow-2xl p-6 border border-green-500/30 backdrop-blur-lg hover:border-green-400/50 transition-all duration-300 hover:scale-105">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-green-300 text-sm font-medium uppercase tracking-wider">Ativos</p>
+                            <p id="activeClients" class="text-4xl font-bold text-white">0</p>
+                        </div>
+                        <div class="bg-gradient-to-r from-green-500 to-green-600 p-4 rounded-2xl shadow-lg shadow-green-500/50">
+                            <i class="fas fa-check-circle text-black text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-br from-gray-800 to-black rounded-2xl shadow-2xl p-6 border border-yellow-500/30 backdrop-blur-lg hover:border-yellow-400/50 transition-all duration-300 hover:scale-105">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-yellow-300 text-sm font-medium uppercase tracking-wider">Vencendo em 3 dias</p>
+                            <p id="warningClients" class="text-4xl font-bold text-white">0</p>
+                        </div>
+                        <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 p-4 rounded-2xl shadow-lg shadow-yellow-500/50">
+                            <i class="fas fa-exclamation-triangle text-black text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-br from-gray-800 to-black rounded-2xl shadow-2xl p-6 border border-red-500/30 backdrop-blur-lg hover:border-red-400/50 transition-all duration-300 hover:scale-105">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-red-300 text-sm font-medium uppercase tracking-wider">Vencidos</p>
+                            <p id="expiredClients" class="text-4xl font-bold text-white">0</p>
+                        </div>
+                        <div class="bg-gradient-to-r from-red-500 to-red-600 p-4 rounded-2xl shadow-lg shadow-red-500/50">
+                            <i class="fas fa-times-circle text-black text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-gray-800 to-black rounded-2xl shadow-2xl p-6 mb-8 border border-orange-500/30 backdrop-blur-lg">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1">
+                        <input type="text" id="searchInput" placeholder="🔍 Buscar por nome do cliente..." 
+                               class="w-full px-6 py-4 bg-gray-900/50 border border-orange-500/30 rounded-xl text-white placeholder-orange-300/70 focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all duration-300 backdrop-blur-lg">
+                    </div>
+                    <select id="statusFilter" class="px-6 py-4 bg-gray-900/50 border border-orange-500/30 rounded-xl text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all duration-300 backdrop-blur-lg">
+                        <option value="" class="bg-gray-900">Todos os Status</option>
+                        <option value="active" class="bg-gray-900">Ativos</option>
+                        <option value="warning" class="bg-gray-900">Vencendo em 3 dias</option>
+                        <option value="expired" class="bg-gray-900">Vencidos</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-gray-800 to-black rounded-2xl shadow-2xl overflow-hidden border border-orange-500/30 backdrop-blur-lg">
+                <div class="px-6 py-6 border-b border-orange-500/30 bg-gradient-to-r from-orange-900/20 to-black/50">
+                    <h2 class="text-2xl font-bold text-orange-400 uppercase tracking-wider">Lista de Clientes</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gradient-to-r from-gray-900 to-black border-b border-orange-500/30">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-orange-300 uppercase tracking-wider">Cliente</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-orange-300 uppercase tracking-wider">Data Adesão</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-orange-300 uppercase tracking-wider">Telefone</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-orange-300 uppercase tracking-wider">Servidor</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-orange-300 uppercase tracking-wider">Equipamento</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-orange-300 uppercase tracking-wider">Vencimento</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-orange-300 uppercase tracking-wider">Licença</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-orange-300 uppercase tracking-wider">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientsTableBody" class="bg-gradient-to-br from-gray-800/50 to-black/50 divide-y divide-orange-500/20">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div> <div id="formContent" class="hidden container mx-auto px-6 py-8">
+        <div class="bg-gradient-to-br from-gray-800 to-black rounded-2xl shadow-2xl w-full max-w-2xl mx-auto border border-orange-500/30 backdrop-blur-lg">
+            <div class="px-6 py-6 border-b border-orange-500/30 bg-gradient-to-r from-orange-900/20 to-black/50 flex items-center justify-between">
+                <h3 id="modalTitle" class="text-2xl font-bold text-orange-400 uppercase tracking-wider">Novo Cliente</h3>
+                </div>
+            
+            <form id="clientForm" class="p-6 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-bold text-orange-300 mb-3 uppercase tracking-wider">Nome do Cliente *</label>
+                        <input type="text" id="clientName" required 
+                               class="w-full px-4 py-4 bg-gray-900/50 border border-orange-500/30 rounded-xl text-white placeholder-orange-300/50 focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all duration-300 backdrop-blur-lg">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-bold text-orange-300 mb-3 uppercase tracking-wider">Data de Adesão *</label>
+                        <input type="date" id="joinDate" required 
+                               class="w-full px-4 py-4 bg-gray-900/50 border border-orange-500/30 rounded-xl text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all duration-300 backdrop-blur-lg">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-bold text-orange-300 mb-3 uppercase tracking-wider">Telefone *</label>
+                        <input type="tel" id="phoneNumber" required placeholder="(11) 99999-9999"
+                               class="w-full px-4 py-4 bg-gray-900/50 border border-orange-500/30 rounded-xl text-white placeholder-orange-300/50 focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all duration-300 backdrop-blur-lg">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-bold text-orange-300 mb-3 uppercase tracking-wider">Nome do Servidor *</label>
+                        <input type="text" id="serverName" required 
+                               class="w-full px-4 py-4 bg-gray-900/50 border border-orange-500/30 rounded-xl text-white placeholder-orange-300/50 focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all duration-300 backdrop-blur-lg">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-bold text-orange-300 mb-3 uppercase tracking-wider">Equipamento *</label>
+                        <input type="text" id="equipment" required 
+                               class="w-full px-4 py-4 bg-gray-900/50 border border-orange-500/30 rounded-xl text-white placeholder-orange-300/50 focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all duration-300 backdrop-blur-lg">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-bold text-orange-300 mb-3 uppercase tracking-wider">Data de Vencimento *</label>
+                        <input type="date" id="expiryDate" required 
+                               class="w-full px-4 py-4 bg-gray-900/50 border border-orange-500/30 rounded-xl text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all duration-300 backdrop-blur-lg">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-bold text-orange-300 mb-3 uppercase tracking-wider">Licença de Aplicativo</label>
+                    <input type="text" id="appLicense" placeholder="Opcional"
+                           class="w-full px-4 py-4 bg-gray-900/50 border border-orange-500/30 rounded-xl text-white placeholder-orange-300/50 focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all duration-300 backdrop-blur-lg">
+                </div>
+                
+                <div class="flex justify-end space-x-4 pt-6">
+                    <button type="button" id="cancelBtn" class="px-8 py-4 border border-orange-500/30 text-orange-300 rounded-xl hover:bg-orange-500/20 font-bold uppercase tracking-wider transition-all duration-300 backdrop-blur-lg">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-8 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-black rounded-xl hover:from-orange-400 hover:to-orange-500 font-bold uppercase tracking-wider shadow-lg shadow-orange-500/50 hover:shadow-orange-400/70 hover:scale-105 transition-all duration-300">
+                        Salvar Cliente
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        class ClientManager {
+            constructor() {
+                this.clients = JSON.parse(localStorage.getItem('drsplay_clients')) || [];
+                this.editingIndex = -1;
+                this.initializeEventListeners();
+                this.renderClients();
+                this.updateStats();
+            }
+
+            initializeEventListeners() {
+                // Botões de controle
+                document.getElementById('addClientBtn').addEventListener('click', () => this.openForm());
+                document.getElementById('cancelBtn').addEventListener('click', () => this.closeForm());
+                
+                // Submissão do formulário
+                document.getElementById('clientForm').addEventListener('submit', (e) => this.handleSubmit(e));
+                
+                // Busca e filtro
+                document.getElementById('searchInput').addEventListener('input', () => this.renderClients());
+                document.getElementById('statusFilter').addEventListener('change', () => this.renderClients());
+                
+                // Data de adesão padrão
+                document.getElementById('joinDate').value = new Date().toISOString().split('T')[0];
+            }
+
+            openForm(index = -1) {
+                this.editingIndex = index;
+                const title = document.getElementById('modalTitle');
+                
+                if (index >= 0) {
+                    title.textContent = 'Editar Cliente';
+                    this.populateForm(this.clients[index]);
+                } else {
+                    title.textContent = 'Novo Cliente';
+                    document.getElementById('clientForm').reset();
+                    document.getElementById('joinDate').value = new Date().toISOString().split('T')[0];
+                }
+                
+                // Esconde a lista e mostra o formulário
+                document.getElementById('mainContent').classList.add('hidden');
+                document.getElementById('formContent').classList.remove('hidden');
+            }
+
+            closeForm() {
+                // Esconde o formulário e mostra a lista
+                document.getElementById('formContent').classList.add('hidden');
+                document.getElementById('mainContent').classList.remove('hidden');
+                this.editingIndex = -1;
+            }
+
+            populateForm(client) {
+                document.getElementById('clientName').value = client.name;
+                document.getElementById('joinDate').value = client.joinDate;
+                document.getElementById('phoneNumber').value = client.phone;
+                document.getElementById('serverName').value = client.server;
+                document.getElementById('equipment').value = client.equipment;
+                document.getElementById('expiryDate').value = client.expiryDate;
+                document.getElementById('appLicense').value = client.license || '';
+            }
+
+            handleSubmit(e) {
+                e.preventDefault();
+                
+                const client = {
+                    name: document.getElementById('clientName').value,
+                    joinDate: document.getElementById('joinDate').value,
+                    phone: document.getElementById('phoneNumber').value,
+                    server: document.getElementById('serverName').value,
+                    equipment: document.getElementById('equipment').value,
+                    expiryDate: document.getElementById('expiryDate').value,
+                    license: document.getElementById('appLicense').value || ''
+                };
+
+                if (this.editingIndex >= 0) {
+                    this.clients[this.editingIndex] = client;
+                } else {
+                    this.clients.push(client);
+                }
+
+                this.saveClients();
+                this.renderClients();
+                this.updateStats();
+                this.closeForm();
+            }
+
+            deleteClient(index) {
+                // A função confirm() foi removida pois não funciona no WebViewer
+                this.clients.splice(index, 1);
+                this.saveClients();
+                this.renderClients();
+                this.updateStats();
+            }
+
+            saveClients() {
+                localStorage.setItem('drsplay_clients', JSON.stringify(this.clients));
+            }
+
+            getExpiryStatus(expiryDate) {
+                const today = new Date();
+                const expiry = new Date(expiryDate);
+                const diffTime = expiry - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                if (diffDays <= 0) return 'expired';
+                if (diffDays <= 3) return 'warning';
+                return 'active';
+            }
+
+            getStatusBadge(status, daysLeft) {
+                const badges = {
+                    expired: `<span class="px-4 py-2 text-xs font-bold bg-gradient-to-r from-red-500 to-red-600 text-black rounded-xl shadow-lg shadow-red-500/50 animate-pulse uppercase tracking-wider">VENCIDO</span>`,
+                    warning: `<span class="px-4 py-2 text-xs font-bold bg-gradient-to-r from-yellow-500 to-yellow-600 text-black rounded-xl shadow-lg shadow-yellow-500/50 uppercase tracking-wider">${daysLeft} DIAS</span>`,
+                    active: `<span class="px-4 py-2 text-xs font-bold bg-gradient-to-r from-green-500 to-green-600 text-black rounded-xl shadow-lg shadow-green-500/50 uppercase tracking-wider">ATIVO</span>`
+                };
+                return badges[status];
+            }
+
+            formatPhone(phone) {
+                const digits = phone.replace(/\D/g, '');
+                return digits;
+            }
+
+            renderClients() {
+                const tbody = document.getElementById('clientsTableBody');
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                const statusFilter = document.getElementById('statusFilter').value;
+
+                let filteredClients = this.clients.filter(client => {
+                    const matchesSearch = client.name.toLowerCase().includes(searchTerm);
+                    const status = this.getExpiryStatus(client.expiryDate);
+                    const matchesStatus = !statusFilter || status === statusFilter;
+                    return matchesSearch && matchesStatus;
+                });
+
+                if (filteredClients.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="px-6 py-16 text-center">
+                                <div class="flex flex-col items-center space-y-4">
+                                    <div class="bg-gradient-to-r from-orange-500 to-orange-600 p-6 rounded-2xl shadow-lg shadow-orange-500/50">
+                                        <i class="fas fa-users text-4xl text-black"></i>
+                                    </div>
+                                    <p class="text-xl font-bold text-orange-400 uppercase tracking-wider">Nenhum cliente encontrado</p>
+                                    <p class="text-orange-300/70">Adicione seu primeiro cliente clicando no botão "NOVO CLIENTE"</p>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = filteredClients.map((client, index) => {
+                    const originalIndex = this.clients.indexOf(client);
+                    const status = this.getExpiryStatus(client.expiryDate);
+                    const expiry = new Date(client.expiryDate);
+                    const today = new Date();
+                    const daysLeft = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+                    const whatsappNumber = this.formatPhone(client.phone);
+                    const whatsappUrl = `https://wa.me/55${whatsappNumber}`;
+
+                    return `
+                        <tr class="hover:bg-orange-500/10 transition-all duration-300 border-b border-orange-500/10">
+                            <td class="px-6 py-4">
+                                <div class="font-bold text-white">${client.name}</div>
+                            </td>
+                            <td class="px-6 py-4 text-orange-200">
+                                ${new Date(client.joinDate).toLocaleDateString('pt-BR')}
+                            </td>
+                            <td class="px-6 py-4">
+                                <a href="${whatsappUrl}" target="_blank" rel="noopener noreferrer" 
+                                   class="flex items-center space-x-2 text-green-400 hover:text-green-300 transition-all duration-300 hover:scale-105">
+                                    <i class="fab fa-whatsapp text-lg"></i>
+                                    <span class="font-medium">${client.phone}</span>
+                                </a>
+                            </td>
+                            <td class="px-6 py-4 text-orange-200">${client.server}</td>
+                            <td class="px-6 py-4 text-orange-200">${client.equipment}</td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-orange-200 font-medium">${new Date(client.expiryDate).toLocaleDateString('pt-BR')}</span>
+                                    ${this.getStatusBadge(status, daysLeft)}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-orange-200">
+                                ${client.license || '<span class="text-orange-400/60 italic">Não informado</span>'}
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex space-x-2">
+                                    <button onclick="clientManager.openForm(${originalIndex})" 
+                                            class="text-orange-400 hover:text-orange-300 p-3 rounded-xl hover:bg-orange-500/20 transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-orange-500/30">
+                                        <i class="fas fa-edit text-lg"></i>
+                                    </button>
+                                    <button onclick="clientManager.deleteClient(${originalIndex})" 
+                                            class="text-red-400 hover:text-red-300 p-3 rounded-xl hover:bg-red-500/20 transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-red-500/30">
+                                        <i class="fas fa-trash text-lg"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            updateStats() {
+                let active = 0, warning = 0, expired = 0;
+
+                this.clients.forEach(client => {
+                    const status = this.getExpiryStatus(client.expiryDate);
+                    if (status === 'active') active++;
+                    else if (status === 'warning') warning++;
+                    else if (status === 'expired') expired++;
+                });
+
+                document.getElementById('totalClients').textContent = this.clients.length;
+                document.getElementById('activeClients').textContent = active;
+                document.getElementById('warningClients').textContent = warning;
+                document.getElementById('expiredClients').textContent = expired;
+            }
+        }
+
+        // Renomeei as chamadas de openModal para openForm para clareza
+        const clientManager = new ClientManager();
+
+        // Máscara de formatação do número de telefone
+        document.getElementById('phoneNumber').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 11) {
+                value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+            } else if (value.length >= 7) {
+                value = value.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+            } else if (value.length >= 3) {
+                value = value.replace(/(\d{2})(\d{0,5})/, '($1) $2');
+            }
+            e.target.value = value;
+        });
+    </script>
+    <script>
+  // Registra o Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(registration => {
+          console.log('Service Worker registrado com sucesso:', registration);
+        })
+        .catch(error => {
+          console.log('Falha ao registrar o Service Worker:', error);
+        });
+    });
+  }
+</script>
+</body>
+</html>
